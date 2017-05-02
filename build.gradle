@@ -1,0 +1,70 @@
+group 'cathywu'
+version '1.0'
+
+def artifactId = "data-access-security"
+
+apply plugin: 'java'
+apply plugin: 'maven'
+buildscript {
+    repositories {
+        maven { url "http://nexusotr.chinacloudapp.cn:8081/repository/mvngroup/" }
+    }
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+    maven { url "http://repo.spring.io/libs-milestone" }
+    maven { url "http://repo.spring.io/libs-snapshot" }
+    maven { url "http://nexusotr.chinacloudapp.cn:8081/repository/mvngroup/" }
+    mavenCentral()
+}
+
+project.ext {
+    username = ''
+    password = ''
+}
+
+loadConfiguration()
+
+task sourceJar(type: Jar) {
+    println("${project.version}")
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+artifacts {
+    archives sourceJar
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "http://nexusotr.chinacloudapp.cn:8081/repository/mvnlocal/") {
+                authentication(userName: project.ext.username, password: project.ext.password)
+            }
+
+            pom.version = "${project.version}"
+            pom.artifactId = "$artifactId"
+            pom.groupId = "${project.group}"
+        }
+    }
+}
+
+dependencies {
+    compileOnly 'org.springframework:spring-core:4.3.3.RELEASE'
+    compileOnly 'org.springframework:spring-context:4.3.3.RELEASE'
+    compileOnly 'org.springframework.security:spring-security-web:4.1.3.RELEASE'
+    compileOnly 'org.springframework.security:spring-security-config:4.1.3.RELEASE'
+    compileOnly 'org.springframework:spring-context-support:4.3.3.RELEASE'
+    compileOnly 'org.springframework:spring-aop:4.3.3.RELEASE'
+    compileOnly 'org.aspectj:aspectjweaver:1.8.9'
+    compileOnly 'org.apache.commons:commons-lang3:3.4'
+    compileOnly 'org.slf4j:slf4j-api:1.7.21'
+}
+
+def loadConfiguration() {
+    def username = hasProperty('user') ? user : ''
+    def passwd = hasProperty('pwd') ? pwd : ''
+    project.ext.username = username
+    project.ext.password = passwd
+}
