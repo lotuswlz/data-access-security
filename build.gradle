@@ -7,7 +7,8 @@ apply plugin: 'java'
 apply plugin: 'maven'
 buildscript {
     repositories {
-        maven { url "http://nexusotr.chinacloudapp.cn:8081/repository/mvngroup/" }
+        mavenCentral()
+        jcenter()
     }
 }
 
@@ -16,7 +17,6 @@ sourceCompatibility = 1.8
 repositories {
     maven { url "http://repo.spring.io/libs-milestone" }
     maven { url "http://repo.spring.io/libs-snapshot" }
-    maven { url "http://nexusotr.chinacloudapp.cn:8081/repository/mvngroup/" }
     mavenCentral()
 }
 
@@ -34,20 +34,6 @@ task sourceJar(type: Jar) {
 }
 artifacts {
     archives sourceJar
-}
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: "http://nexusotr.chinacloudapp.cn:8081/repository/mvnlocal/") {
-                authentication(userName: project.ext.username, password: project.ext.password)
-            }
-
-            pom.version = "${project.version}"
-            pom.artifactId = "$artifactId"
-            pom.groupId = "${project.group}"
-        }
-    }
 }
 
 dependencies {
